@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyConsoleApp.Models
+namespace OrderManagement.Models
 {
     [Table("OrderTable")]
     public class Order

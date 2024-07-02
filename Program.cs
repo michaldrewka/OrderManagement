@@ -1,47 +1,83 @@
 ﻿using System;
-using System.Configuration;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Threading.Tasks;
-using MyConsoleApp.Data;
-using MyConsoleApp.Models;
-using MyConsoleApp.Services;
+using OrderManagement.Data;
+using OrderManagement.Models;
+using OrderManagement.Services;
 
-namespace MyConsoleApp
+namespace OrderManagement
 {
     class Program
     {
         static async Task Main(string[] args)
         {
-            var clientId = ConfigurationManager.AppSettings["ClientId"];
-            var clientSecret = ConfigurationManager.AppSettings["ClientSecret"];
-            var environment = ConfigurationManager.AppSettings["Environment"];
-            var connectionString = ConfigurationManager.ConnectionStrings["MyDatabaseConnectionString"].ConnectionString;
-
-            var dbContext = new ApplicationDbContext();
-            var orderRepository = new Repository<Order>(dbContext);
-            var billingEntryRepository = new Repository<BillingEntry>(dbContext);
-            var allegroApiService = new AllegroApiService(clientId, clientSecret, environment);
-
-            await allegroApiService.AuthenticateAsync();
-
-            var orders = orderRepository.GetAll();
-
-            foreach (var order in orders)
+            try
             {
-                var billingEntries = await allegroApiService.GetBillingEntries(order.OrderId);
+                // Step 1: Redirect user to authorization URL
+                AllegroApiService.RedirectToAuthorization();
 
-                foreach (var billingEntry in billingEntries)
+                // Step 2: Get authorization_code from URL redirection
+                Console.WriteLine(@"Please enter the authorization code:");
+                var authorizationCode = Console.ReadLine();
+
+                // Step 3: Get access token using authorization_code
+                var accessToken = await AllegroApiService.GetAccessTokenAsync(authorizationCode);
+
+                // Step 4: User selects what information to retrieve
+                Console.WriteLine(@"Select an option:");
+                Console.WriteLine(@"1. Retrieve orders");
+                Console.WriteLine(@"2. Retrieve order billing entries");
+                Console.WriteLine(@"3. Retrieve offers");
+                Console.WriteLine(@"4. Retrieve offers billing entries");
+                var choice = Console.ReadLine();
+
+                using (var db = new ApplicationDbContext())
                 {
-                    billingEntryRepository.Add(new BillingEntry
+                    switch (choice)
                     {
-                        OrderId = order.OrderId,
-                        Type = billingEntry.Type,
-                        Amount = billingEntry.Amount,
-                        Date = billingEntry.Date
-                    });
+                        case "1":
+                            // Retrieve and store orders
+                            await AllegroApiService.GetAndStoreOrdersAsync(accessToken);
+                            Console.WriteLine(@"Orders have been successfully retrieved and stored in the database.");
+                            break;
+                        case "2":
+                            // Retrieve and store orders billing entries
+                            var billingEntries = await AllegroApiService.GetOrdersBillingEntries(accessToken);
+                            db.OrderBillingEntries.AddRange(billingEntries);
+                            await db.SaveChangesAsync();
+                            Console.WriteLine(@"Billing entries fetched and saved to the database.");
+                            break;
+                        case "3":
+                            // Retrieve and store offers
+                            await AllegroApiService.GetAndStoreOffersAsync(accessToken);
+                            Console.WriteLine(@"Offers have been successfully retrieved and stored in the database.");
+                            break;
+                        case "4":
+                            // Retrieve and store offer billing entries
+                            var offers = await db.Offers
+                                .ToListAsync();
+                            foreach (var offer in offers)
+                            {
+                                var offerbillingEntries = await AllegroApiService.GetOffersBillingEntries(accessToken, offer.OfferId);
+                                db.OfferBillingEntries.Add(offerbillingEntries);
+                                await db.SaveChangesAsync();
+                            }
+                            Console.WriteLine(@"Offers have been successfully retrieved and stored in the database.");
+                            break;
+                        default:
+                            Console.WriteLine(@"Invalid choice. Exiting.");
+                            break;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($@"Error: {ex.Message}");
+                Console.ReadKey();
+            }
 
-            Console.WriteLine("Billing entries have been fetched and saved.");
+            Console.ReadKey();
         }
     }
 }

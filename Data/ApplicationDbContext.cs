@@ -1,28 +1,15 @@
 ﻿using System.Data.Entity;
-using MyConsoleApp.Models;
+using OrderManagement.Models;
 
-namespace MyConsoleApp.Data
+namespace OrderManagement.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext() : base("name=MyDatabaseConnectionString")
-        {
-        }
+        public ApplicationDbContext() : base("MyDatabaseConnectionString") { }
 
         public DbSet<Order> Orders { get; set; }
-        public DbSet<BillingEntry> BillingEntries { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Order>()
-                .ToTable("OrderTable")
-                .HasKey(e => e.Id);
-
-            modelBuilder.Entity<BillingEntry>()
-                .ToTable("BillingEntries")
-                .HasKey(e => e.Id);
-        }
+        public DbSet<OrderBillingEntry> OrderBillingEntries { get; set; }
+        public DbSet<Offer> Offers { get; set; }
+        public DbSet<OfferBillingEntry> OfferBillingEntries { get; set; }
     }
 }

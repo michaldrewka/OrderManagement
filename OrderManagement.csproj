@@ -58,8 +58,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ApplicationDbContext.cs" />
-    <Compile Include="Data\Repository.cs" />
-    <Compile Include="Models\BillingEntry.cs" />
+    <Compile Include="Migrations\202407021935186_AddOfferTable.cs" />
+    <Compile Include="Migrations\202407021935186_AddOfferTable.Designer.cs">
+      <DependentUpon>202407021935186_AddOfferTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202407022032179_AddOfferBillingEntriesTable.cs" />
+    <Compile Include="Migrations\202407022032179_AddOfferBillingEntriesTable.Designer.cs">
+      <DependentUpon>202407022032179_AddOfferBillingEntriesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202407022035230_AddOfferBillingEntriesTable1.cs" />
+    <Compile Include="Migrations\202407022035230_AddOfferBillingEntriesTable1.Designer.cs">
+      <DependentUpon>202407022035230_AddOfferBillingEntriesTable1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202407022043520_AddOfferBillingEntriesTable2.cs" />
+    <Compile Include="Migrations\202407022043520_AddOfferBillingEntriesTable2.Designer.cs">
+      <DependentUpon>202407022043520_AddOfferBillingEntriesTable2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202407022123252_AddOfferBillingEntriesTable3.cs" />
+    <Compile Include="Migrations\202407022123252_AddOfferBillingEntriesTable3.Designer.cs">
+      <DependentUpon>202407022123252_AddOfferBillingEntriesTable3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\OfferBillingEntry.cs" />
+    <Compile Include="Models\OrderBillingEntry.cs" />
+    <Compile Include="Models\Offer.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,6 +90,23 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202407021935186_AddOfferTable.resx">
+      <DependentUpon>202407021935186_AddOfferTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202407022032179_AddOfferBillingEntriesTable.resx">
+      <DependentUpon>202407022032179_AddOfferBillingEntriesTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202407022035230_AddOfferBillingEntriesTable1.resx">
+      <DependentUpon>202407022035230_AddOfferBillingEntriesTable1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202407022043520_AddOfferBillingEntriesTable2.resx">
+      <DependentUpon>202407022043520_AddOfferBillingEntriesTable2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202407022123252_AddOfferBillingEntriesTable3.resx">
+      <DependentUpon>202407022123252_AddOfferBillingEntriesTable3.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
